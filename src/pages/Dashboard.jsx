@@ -6,7 +6,19 @@ export default function UrlShortenerLanding() {
     const [input, setInput] = useState("");
     const { loading, shortUrl, getShortUrl, error } = useContext(ApiContext); // use error from context
 
+    const [copied, setCopied] = useState(null); // "url" | "id" | null
+
+    const handleClipBoard = (target, type) => {
+        navigator.clipboard.writeText(target);
+        setCopied(type);
+        setTimeout(() => setCopied(null), 500);
+    };
+
+
     const [localError, setLocalError] = useState(""); // only for input validation
+
+
+
 
     const handleShorten = async () => {
         setLocalError("");
@@ -90,22 +102,47 @@ export default function UrlShortenerLanding() {
                                 >
                                     {shortUrl.shortUrl}
                                 </a>
-                                <Clipboard
-                                    size={22}
-                                    className="cursor-pointer text-gray-500 hover:text-indigo-600"
-                                    onClick={() => navigator.clipboard.writeText(shortUrl.shortUrl)}
-                                />
+                                <span className="relative flex items-center">
+                                    {copied === "url" && (
+                                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs px-2 py-1 rounded-md shadow-md animate-fade opacity-80">
+                                            Copied!
+                                        </span>
+                                    )}
+
+                                    <Clipboard
+                                        size={22}
+                                        className={`cursor-pointer text-gray-500 ${copied === "url" ? "text-indigo-600" : "text-indigo-100"} `}
+                                        onClick={() => handleClipBoard(shortUrl.shortUrl, "url")}
+                                    />
+
+
+
+                                </span>
+
                             </div>
 
                             {/* Shorten ID with copy */}
                             <div className="flex items-center gap-2 text-gray-600 text-sm">
                                 <span className="font-medium">ShortenID:</span>
                                 <span className="font-mono">{shortUrl.shortId}</span>
-                                <Clipboard
-                                    size={20}
-                                    className="cursor-pointer text-gray-500 hover:text-indigo-600"
-                                    onClick={() => navigator.clipboard.writeText(shortUrl.shortId)}
-                                />
+
+                                <span className="relative flex items-center">
+                                    {/* Popup message */}
+                                    {copied === "id" && (
+                                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs px-2 py-1 rounded-md shadow-md animate-fade opacity-80">
+                                            Copied!
+                                        </span>
+                                    )}
+
+                                    {/* Clipboard icon */}
+                                    <Clipboard
+                                        size={20}
+                                        className={`cursor-pointer text-gray-500 ${copied === "id" ? "text-indigo-600" : "text-indigo-100"
+                                            } hover:text-indigo-600`}
+                                        onClick={() => handleClipBoard(shortUrl.shortId, "id")}
+                                    />
+                                </span>
+
                             </div>
                         </div>
                     )}
